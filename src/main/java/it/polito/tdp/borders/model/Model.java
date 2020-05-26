@@ -17,10 +17,10 @@ public class Model {
 	
 	private Graph<Country, DefaultEdge> graph ;
 	private Map<Integer,Country> countriesMap ;
-	
+	private Simulator sim;
 	public Model() {
 		this.countriesMap = new HashMap<>() ;
-
+this.sim= new Simulator();
 	}
 	
 	public void creaGrafo(int anno) {
@@ -41,7 +41,12 @@ public class Model {
 			
 		}
 	}
-	
+	public List<Country> getCountries() {
+		List<Country> result= new ArrayList<>();
+		result.addAll(this.graph.vertexSet());
+		Collections.sort(result);
+		return result ;
+	}
 	public List<CountryAndNumber> getCountryAndNumber() {
 		List<CountryAndNumber> list = new ArrayList<>() ;
 		
@@ -51,5 +56,32 @@ public class Model {
 		Collections.sort(list);
 		return list ;
 	}
+	
+	public void simula(Country partenza) {
+		if(this.graph!=null) {
+		sim.init(partenza, this.graph);
+		sim.run();
+		}
+	}
+	
+	public List<CountryAndNumber> getStanziali(){
+		List<CountryAndNumber> result= new ArrayList<>();
+		for(Country c: this.sim.getStanziali().keySet()) {
+			result.add(new CountryAndNumber(c, this.sim.getStanziali().get(c)));
+		}
+		Collections.sort(result);
+		return result;
+		}
+	
+	public int getT() {
+		return this.sim.getT();
+	}
+
+	public List<Country> getVicini(Country country) {
+		return Graphs.neighborListOf(graph, country);
+		
+	}
+
+	
 
 }
